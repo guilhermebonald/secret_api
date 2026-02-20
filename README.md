@@ -2,6 +2,25 @@
 
 Uma API de gerenciamento seguro de senhas e segredos construída com **FastAPI**, **SQLAlchemy** e **criptografia robusta**.
 
+## ⚠️ Importante: Aviso de Segurança e Propósito Educacional
+
+Este projeto foi desenvolvido **com propósito educacional** e para demonstrar conceitos de segurança, autenticação e criptografia em APIs.
+
+### 🚨 Nota Crítica de Segurança
+
+**Em um projeto de produção real**, a criptografia dos dados sensíveis **NUNCA deve ser feita no servidor (API)**. Em vez disso:
+
+- ✅ **Abordagem Segura**: A criptografia deve ser realizada **no cliente** (frontend/aplicação do usuário)
+- ✅ O cliente envia o dados **já criptografados** para o servidor
+- ✅ O servidor apenas armazena e recupera dados criptografados, sem nunca acessar a chave de descriptografia
+- ✅ Apenas o cliente (que possui a chave mestra) pode descriptografar os dados
+
+**Por que?** Se o servidor criptografa e descriptografa, a chave de criptografia fica exposta no servidor. Se alguém invadir o servidor, terá acesso à chave e poderá descriptografar tudo.
+
+### 📚 Este Projeto
+
+Neste projeto, a criptografia é feita pelo servidor **apenas para fins educacionais**, permitindo entender como funciona a integração da criptografia em uma API. **Não use esta abordagem em produção.**
+
 ## 📋 Sobre o Projeto
 
 O **Lock API** é uma aplicação que permite armazenar, acessar e gerenciar senhas e dados sensíveis de forma segura. O projeto é desenvolvido em **fases progressivas**, começando com um CRUD básico e evoluindo até um sistema completo de autenticação e criptografia.
@@ -195,10 +214,42 @@ lock_api/
 
 ## 🔒 Segurança
 
+### Implementação Atual (Educacional)
+
 - Senhas são criptografadas com bcrypt
-- Dados sensíveis são criptografados com Fernet (AES)
+- Dados sensíveis são criptografados com Fernet (AES) **no servidor**
 - Tokens JWT para autenticação stateless
 - Variáveis de ambiente para dados sensíveis
+
+### ✅ Melhorias de Segurança (Em Fases Futuras)
+
+Para tornar este projeto mais próximo de um cenário de produção, as seguintes melhorias devem ser implementadas:
+
+1. **Criptografia Client-Side** (Fase 2 Revisada)
+   - Implementar biblioteca de criptografia no cliente
+   - Dados são criptografados antes de serem enviados
+   - Servidor nunca tem acesso ao texto plano
+
+2. **End-to-End Encryption (E2EE)**
+   - Cliente criptografa com sua chave privada
+   - Servidor armazena apenas dados criptografados
+   - Apenas o cliente consegue descriptografar
+
+3. **Gerenciamento Seguro de Chaves**
+   - Chaves armazenadas localmente no cliente
+   - Nunca transmitidas ou armazenadas no servidor
+   - Possibilidade de backup criptografado
+
+4. **Zero-Knowledge Architecture**
+   - Servidor não tem conhecimento dos dados armazenados
+   - Servidor não pode ler, descriptografar ou recuperar dados
+
+### 📖 Referências Educacionais
+
+Para aprender mais sobre segurança real em aplicações de armazenamento de senhas:
+- [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
+- [End-to-End Encryption](https://en.wikipedia.org/wiki/End-to-end_encryption)
+- [Zero-Knowledge Proof](https://en.wikipedia.org/wiki/Zero-knowledge_proof)
 
 ## 🤝 Contribuindo
 
@@ -218,9 +269,10 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 Desenvolvido como projeto de portfólio para demonstrar conhecimentos em:
 - APIs RESTful com FastAPI
-- Criptografia e segurança
+- Criptografia e segurança (conceitos educacionais)
 - Autenticação e autorização
 - Boas práticas de desenvolvimento
+- **Consciência sobre segurança em aplicações real-world**
 
 ## 📞 Contato
 
