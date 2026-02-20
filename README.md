@@ -8,7 +8,7 @@ O **Lock API** é uma aplicação que permite armazenar, acessar e gerenciar sen
 
 ## 🚀 Fases de Desenvolvimento
 
-### 🟢 Fase 1: Fundação (O CRUD Básico)
+### 🟢 Fase 1: Fundação (O CRUD Básico) ✅ CONCLUÍDA
 
 O objetivo desta fase é ter uma API funcional que salve e leia dados no banco de dados.
 
@@ -21,6 +21,7 @@ O objetivo desta fase é ter uma API funcional que salve e leia dados no banco d
   - [x] `GET /secrets` - Listar todos
   - [x] `GET /secrets/{id}` - Buscar um específico
   - [x] `DELETE /secrets/{id}` - Deletar um registro
+  - [x] `PATCH /secrets/{id}` - Atualizar um registro
 
 ### 🟡 Fase 2: O Coração (Criptografia)
 
@@ -114,15 +115,58 @@ Após iniciar a aplicação, acesse:
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
+### Endpoints Implementados
+
+#### 🔵 Gerenciamento de Segredos
+
+**Criar um novo segredo**
+```http
+POST /secrets
+Content-Type: application/json
+
+{
+  "titulo": "Minha Senha",
+  "servico": "GitHub",
+  "conteudo": "minha_senha_secreta"
+}
+```
+
+**Listar todos os segredos**
+```http
+GET /secrets
+```
+
+**Obter um segredo específico**
+```http
+GET /secrets/{secret_id}
+```
+
+**Atualizar um segredo**
+```http
+PATCH /secrets/{secret_id}
+Content-Type: application/json
+
+{
+  "titulo": "Nova Senha",
+  "servico": "GitHub",
+  "conteudo": "nova_senha_secreta"
+}
+```
+
+**Deletar um segredo**
+```http
+DELETE /secrets/{secret_id}
+```
+
 ## 📦 Dependências
 
 - **fastapi** - Framework web moderno e rápido
 - **uvicorn** - Servidor ASGI
 - **sqlalchemy** - ORM para interação com banco de dados
-- **cryptography** - Criptografia segura
+- **cryptography** - Criptografia segura *(próxima fase)*
 - **python-dotenv** - Gerenciamento de variáveis de ambiente
-- **passlib** - Hashing de senhas
-- **python-jose** - Implementação de JWT
+- **passlib** - Hashing de senhas *(próxima fase)*
+- **python-jose** - Implementação de JWT *(próxima fase)*
 - **pydantic** - Validação de dados
 
 ## 📂 Estrutura do Projeto
@@ -131,21 +175,22 @@ Após iniciar a aplicação, acesse:
 lock_api/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py           # Aplicação FastAPI e rotas
-│   ├── models.py         # Modelos do SQLAlchemy
-│   ├── schemas.py        # Schemas do Pydantic
-│   ├── database.py       # Configuração do banco de dados
-│   └── security.py       # (Fase 2) Lógica de criptografia
-├── tests/                # (Fase 4) Testes automatizados
-├── venv/                 # Ambiente virtual
-├── .env                  # Variáveis de ambiente (não versionado)
-├── .env.example          # Exemplo de variáveis de ambiente
-├── .gitignore            # Arquivos ignorados pelo Git
-├── requirements.txt      # Dependências do projeto
-├── Dockerfile            # (Fase 4) Configuração Docker
-├── docker-compose.yml    # (Fase 4) Orquestração de containers
-└── README.md             # Este arquivo
+│   ├── main.py           # ✅ Aplicação FastAPI e rotas CRUD
+│   ├── models.py         # ✅ Modelos do SQLAlchemy (Secret)
+│   ├── schemas.py        # ✅ Schemas do Pydantic (SecretCreate, SecretUpdate, SecretResponse)
+│   ├── database.py       # ✅ Configuração do banco de dados SQLite
+│   └── security.py       # 🔄 (Fase 2) Lógica de criptografia
+├── tests/                # 🔄 (Fase 4) Testes automatizados
+├── venv/                 # ✅ Ambiente virtual
+├── .env                  # ✅ Variáveis de ambiente (não versionado)
+├── .env.example          # 🔄 Exemplo de variáveis de ambiente
+├── .gitignore            # ✅ Arquivos ignorados pelo Git
+├── requirements.txt      # 🔄 Dependências do projeto
+├── Dockerfile            # 🔄 (Fase 4) Configuração Docker
+├── docker-compose.yml    # 🔄 (Fase 4) Orquestração de containers
+└── README.md             # ✅ Este arquivo
 
+🟢 ✅ Implementado | 🟡 🔄 Em Progresso | 🔴 ⏳ Não Iniciado
 ```
 
 ## 🔒 Segurança
@@ -183,6 +228,6 @@ Se tiver dúvidas ou sugestões, entre em contato ou abra uma issue no repositó
 
 ---
 
-**Status**: Em desenvolvimento 🚧
+**Status**: Fase 1 Concluída ✅ | Fase 2 Em Progresso 🟡
 
 Última atualização: Fevereiro de 2026
