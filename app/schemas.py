@@ -21,7 +21,7 @@ class SecretResponse(BaseModel):
     id: int
     titulo: str
     servico: str
-    conteudo_criptografado: str
+    conteudo: str
 
     class Config:
         from_attributes = True

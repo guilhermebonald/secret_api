@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 from database import SessionLocal, engine
+from security import encrypt_data, decrypt_data
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,31 +20,66 @@ def get_db():
 
 @app.post("/secrets", response_model=schemas.SecretResponse)
 def create_secret(secret: schemas.SecretCreate, db: Session = Depends(get_db)):
+    encrypted_content = encrypt_data(secret.conteudo)
+
     db_secret = models.Secret(
         titulo=secret.titulo,
         servico=secret.servico,
-        conteudo_criptografado=secret.conteudo,  # Adicionar a lógica de criptografia
+        conteudo_criptografado=encrypted_content,
     )
     db.add(db_secret)
     db.commit()
     db.refresh(db_secret)
-    return db_secret
+
+    return schemas.SecretResponse(
+        id=db_secret.id,
+        titulo=db_secret.titulo,
+        servico=db_secret.servico,
+        conteudo=db_secret.conteudo_criptografado,
+    )
 
 
 @app.get("/secrets", response_model=list[schemas.SecretResponse])
 def list_secrets(db: Session = Depends(get_db)):
-    return db.query(models.Secret).all()
+    """
+    Lista todos os segredos com conteúdo criptografado.
+    """
+    secrets = db.query(models.Secret).all()
+
+    result = []
+    for secret in secrets:
+        # Descriptografa o conteúdo
+        conteudo_descriptografado = decrypt_data(secret.conteudo_criptografado)
+
+        response = schemas.SecretResponse(
+            id=secret.id,
+            titulo=secret.titulo,
+            servico=secret.servico,
+            conteudo=conteudo_descriptografado,
+        )
+        result.append(response)
+
+    return result
 
 
 @app.get("/secrets/{secret_id}", response_model=schemas.SecretResponse)
 def get_secret(secret_id: int, db: Session = Depends(get_db)):
     secret = db.query(models.Secret).filter(models.Secret.id == secret_id).first()
+
     if not secret:
         raise HTTPException(status_code=404, detail="Secret not found")
-    return secret
+
+    decrypted_content = decrypt_data(secret.conteudo_criptografado)
+
+    return schemas.SecretResponse(
+        id=secret.id,
+        titulo=secret.titulo,
+        servico=secret.servico,
+        conteudo=decrypted_content,
+    )
 
 
-@app.delete("/secrets/{secret_id}", response_model=schemas.SecretResponse)
+@app.delete("/secrets/{secret_id}", status_code=204)
 def delete_secret(secret_id: int, db: Session = Depends(get_db)):
     secret = db.query(models.Secret).filter(models.Secret.id == secret_id).first()
     if not secret:
@@ -66,10 +102,16 @@ def update_secret(
     if secret_update.servico is not None:
         secret.servico = secret_update.servico
     if secret_update.conteudo is not None:
-        secret.conteudo_criptografado = (
-            secret_update.conteudo
-        )  # Adicionar a lógica de criptografia
+        secret.conteudo_criptografado = encrypt_data(secret_update.conteudo)
 
     db.commit()
     db.refresh(secret)
-    return secret
+
+    conteudo_descriptografado = decrypt_data(secret.conteudo_criptografado)
+
+    return schemas.SecretResponse(
+        id=secret.id,
+        titulo=secret.titulo,
+        servico=secret.servico,
+        conteudo=conteudo_descriptografado,
+    )
